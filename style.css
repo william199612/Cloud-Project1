@@ -1,0 +1,48 @@
+* {
+  font-family: monospace;
+}
+
+body {
+  display: grid;
+  background-color: rgb(59, 59, 59);
+}
+
+h1.title {
+  color: white;
+  text-align: center;
+  margin: 2.5rem 0 2.5rem 0;
+}
+
+div.input {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.day,
+.month {
+  text-align: center;
+}
+
+div.content {
+  display: flex;
+}
+
+div.left {
+  width: 50%;
+  height: 45rem;
+  float: left;
+  border: 5px solid red;
+}
+
+div.right {
+  width: 50%;
+  height: 45rem;
+  float: right;
+  border: 5px solid green;
+}
+
+footer {
+  margin-top: 1rem;
+  color: grey;
+  text-align: center;
+}
