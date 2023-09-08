@@ -18,24 +18,30 @@ async function getDayInfo(req, res, next) {
       },
     });
 
-    let data = await response.json();
+    const data = await response.json();
     // console.log(data);
-    let onThisDay = data.onthisday;
+    const onThisDay = data.onthisday;
+    // dayDetail stores the array of day history
+    let dayDetail = [];
+    // Set a image for today's representative
+    const todayImg = data.tfa.thumbnail.source;
+    const todayImgText = data.tfa.description.text;
 
-    let dayHistoryData = [];
+    const dayHistoryData = {
+      todayImg: todayImg,
+      todayImgText: todayImgText,
+      dayDetail: dayDetail,
+    };
 
     for (let i = 0; i < onThisDay.length; i++) {
       const title = onThisDay[i].text;
       const year = onThisDay[i].year;
-      // get the first page obj -> pages[0]
-      const img = onThisDay[i].pages[0].thumbnail.source;
       const url =
         onThisDay[i].pages[0].content_urls.desktop.page;
 
-      dayHistoryData.push({
+      dayDetail.push({
         title: title,
         year: year,
-        img: img,
         url: url,
       });
     }
@@ -50,11 +56,13 @@ async function getDayInfo(req, res, next) {
       success: false,
       msg: err,
     };
-    next();
   }
+  console.log('Done GetDayInfo!');
+  next();
 }
 
 router.post('', getDayInfo, function (req, res, next) {
+  console.log('Router posting from onThisDay!');
   if (res.locals.responseGetDayData.success) {
     const rsp = res.locals.responseGetDayData;
     return res.status(200).json({

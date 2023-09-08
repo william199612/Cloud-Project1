@@ -4,11 +4,9 @@
 
 body {
   display: grid;
-  background-color: rgb(59, 59, 59);
 }
 
 h1.title {
-  color: white;
   text-align: center;
   margin: 2.5rem 0 2.5rem 0;
 }
@@ -31,7 +29,14 @@ div.left {
   width: 50%;
   height: 45rem;
   float: left;
-  border: 5px solid red;
+  border: 5px solid grey;
+}
+
+div.on-this-day {
+  overflow: scroll;
+  overflow-x: hidden;
+  height: 45rem;
+  margin-left: 2rem;
 }
 
 div.right {
