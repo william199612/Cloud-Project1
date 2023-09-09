@@ -3,8 +3,8 @@ const path = require('path');
 const PORT = 3000;
 require('dotenv').config();
 
-// const indexRouter = require('./index');
 const onThisDayRouter = require('./routes/onThisDay');
+const apodRouter = require('./routes/apod');
 
 const app = express();
 
@@ -20,6 +20,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/onThisDay', onThisDayRouter);
+app.use('/apod', apodRouter);
 
 app.listen(PORT, () =>
   console.log(`Listening on port ${PORT}......`)

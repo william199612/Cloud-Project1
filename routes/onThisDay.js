@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 // const axios = require('axios');
-const path = require('path');
+// const path = require('path');
 // const request = require('request');
 
 async function getDayInfo(req, res, next) {

@@ -8,17 +8,22 @@ body {
 
 h1.title {
   text-align: center;
-  margin: 2.5rem 0 2.5rem 0;
+  margin: 1rem 0 1.5rem 0;
 }
 
 div.input {
   text-align: center;
-  margin-bottom: 2.5rem;
 }
 
 .day,
 .month {
   text-align: center;
+}
+
+p.description {
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 1.25rem;
 }
 
 div.content {
@@ -30,13 +35,14 @@ div.left {
   height: 45rem;
   float: left;
   border: 5px solid grey;
+  overflow: scroll;
+  overflow-x: hidden;
 }
 
 div.on-this-day {
-  overflow: scroll;
-  overflow-x: hidden;
   height: 45rem;
-  margin-left: 2rem;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
 }
 
 div.right {
@@ -44,6 +50,36 @@ div.right {
   height: 45rem;
   float: right;
   border: 5px solid green;
+}
+
+div.apod {
+  height: 45rem;
+  width: 100%;
+}
+
+p.errMsg {
+  display: flex;
+  align-items: center;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 footer {
