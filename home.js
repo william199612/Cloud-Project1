@@ -17,7 +17,6 @@ submitBtn.addEventListener('click', async () => {
   });
   // console.log(date);
   // console.log(year, month, day);
-  let today = new Date('year-month-date');
 
   if (date !== '') {
     const res = await axios.post(
@@ -30,15 +29,18 @@ submitBtn.addEventListener('click', async () => {
     );
     // console.log(res.data);
     refreshDaySection(res.data);
-    const response = await axios.post(
-      `${window.location.href}apod`,
-      {
-        year: year,
-        month: month,
-        day: day,
-      }
-    );
-    refreshApodSection(response.data);
+    // refreshApodSection(response.data);
+
+    Array.from(
+      document.getElementsByClassName('apodBtn')
+    ).forEach((element) => {
+      // console.log(element);
+      element.addEventListener('click', () => {
+        // console.log(element);
+        const year = element.id;
+        onClickShowApod(year);
+      });
+    });
   } else {
     alert(response.data.data.msg);
   }
@@ -58,13 +60,13 @@ const refreshDaySection = function (data) {
       t += `<p class='day-year' style='font-size: 18px'>${d.year}</p>`;
       t += `<p class='day-title' style='font-size: 14px; font-weight: bold'>${d.title}</p>`;
       t += `<a href='${d.url}}'><button>View Article</button></a>`;
-      t += `<button onClick='${onClickShowApod(
-        d.year
-      )}' style='margin-bottom: 20px'>View the Apod</button>`;
+      t += `<button class='apodBtn' id='${d.year}' style='margin-bottom: 20px'>View the Apod</button>`;
       t += '</br>';
 
       s += t;
     }
+  } else {
+    s += `<p class='errMsg'>${data.data.msg}</p>`;
   }
   document.getElementById('onThisDay').innerHTML = s;
   console.log('Done refreshing onThisDay Page!');
@@ -76,22 +78,35 @@ const refreshApodSection = function (data) {
   // console.log(data.data);
   if (data.success && data.data.success) {
     s += `<img src='${data.data.apodImg}' alt='${data.data.imgAlt}' style=" width: 100%; height: 100%">`;
-    document.getElementById('apod').innerHTML = s;
   } else {
     s += `<p class='errMsg'>${data.data.msg}</p>`;
   }
-  console.log('Done refreshing onThisDay Page!');
+  document.getElementById('apod').innerHTML = s;
+  console.log('Done refreshing Apod Page!');
 };
 
 async function onClickShowApod(year) {
   console.log('Click view apod button...');
-  const res = await axios
-    .post(`${window.location.href}apod`, {
-      year: year,
-      month: inputMD[0],
-      day: inputMD[1],
-    })
-    .then((res) => {
-      refreshApodSection(res.data);
-    });
+  const limitDate = new Date('1995-06-16');
+  const inputDate = new Date(
+    `${year}-${inputMD[1].month}-${inputMD[1].day}`
+  );
+  if (inputDate >= limitDate) {
+    await axios
+      .post(`${window.location.href}apod`, {
+        year: year,
+        month: inputMD[1].month,
+        day: inputMD[1].day,
+      })
+      .then((res) => {
+        // console.log(res.data);
+        refreshApodSection(res.data);
+      });
+  } else {
+    let s =
+      '<h2 style="text-align: center; margin-bottom: 1rem; padding-top: 20rem">This date is tooooo long time ago...</h2>';
+    s +=
+      '<p style="text-align: center">Please choose another date to show.</p>';
+    document.getElementById('apod').innerHTML = s;
+  }
 }

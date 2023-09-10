@@ -1,7 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const axios = require('axios');
-const path = require('path');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -9,35 +7,19 @@ async function getApodInfo(req, res, next) {
   console.log('Enter GetApodInfo!');
   const { year, month, day } = req.body;
 
-  let today = new Date('year-month-date');
-  let todayYear = today.toString().split('-')[0];
-
   try {
-    if (year != todayYear) {
-      const apodUrl = `https://api.nasa.gov/planetary/apod?api_key=${process.env.APOD_API_KEY}&date=${year}-${month}-${day}`;
+    const apodUrl = `https://api.nasa.gov/planetary/apod?api_key=${process.env.APOD_API_KEY}&date=${year}-${month}-${day}`;
+    console.log('apodUrl: ', apodUrl);
+    const response = await fetch(apodUrl);
+    const data = await response.json();
+    // console.log(data);
 
-      const response = await fetch(apodUrl);
-      const data = await response.json();
-      // console.log(data);
-
-      res.locals.responseGetApodData = {
-        success: true,
-        apodImg: data.hdurl,
-        imgAlt: data.title,
-      };
-    } else {
-      const apodUrl = `https://api.nasa.gov/planetary/apod?api_key=${process.env.APOD_API_KEY}&date=${todayYear}-${month}-${day}`;
-
-      const response = await fetch(apodUrl);
-      const data = await response.json();
-      // console.log(data);
-
-      res.locals.responseGetApodData = {
-        success: true,
-        apodImg: data.hdurl,
-        imgAlt: data.title,
-      };
-    }
+    res.locals.responseGetApodData = {
+      success: true,
+      apodImg: data.hdurl,
+      imgAlt: data.title,
+      msg: data.msg,
+    };
   } catch (err) {
     console.log('Error occurred in OnThisDay API: ', err);
     res.locals.responseGetApodData = {
