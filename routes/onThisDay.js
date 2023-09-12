@@ -40,6 +40,7 @@ async function getDayInfo(req, res, next) {
         onThisDay[i].pages[0].content_urls.desktop.page;
 
       dayDetail.push({
+        id: i,
         title: title,
         year: year,
         url: url,

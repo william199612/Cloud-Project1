@@ -9,7 +9,6 @@ async function getApodInfo(req, res, next) {
 
   try {
     const apodUrl = `https://api.nasa.gov/planetary/apod?api_key=${process.env.APOD_API_KEY}&date=${year}-${month}-${day}`;
-    console.log('apodUrl: ', apodUrl);
     const response = await fetch(apodUrl);
     const data = await response.json();
     // console.log(data);

@@ -1,9 +1,33 @@
 import axios from 'https://cdn.jsdelivr.net/npm/axios@1.3.5/+esm';
 
-const submitBtn = document.getElementById('submitBtn');
 // store the data as a global variable(month and date)
 const inputMD = [0];
 
+// the html code for city dropbox
+const cityDropBoxHTML =
+  '<option value="New York">New York</option>' +
+  '<option value="London">London</option>' +
+  '<option value="Tokyo">Tokyo</option>' +
+  '<option value="Paris">Paris</option>' +
+  '<option value="Beijing">Beijing</option>' +
+  '<option value="Sydney">Sydney</option>' +
+  '<option value="Mumbai">Mumbai</option>' +
+  '<option value="Mexico City">Mexico City</option>' +
+  '<option value="Istanbul">Istanbul</option>' +
+  '<option value="Taipei">Taipei</option>' +
+  '<option value="Cairo">Cairo</option>' +
+  '<option value="Moscow">Moscow</option>' +
+  '<option value="Seoul">Seoul</option>' +
+  '<option value="Toronto">Toronto</option>' +
+  '<option value="Brisbane">Brisbane</option>' +
+  '<option value="Cape Town">Cape Town</option>' +
+  '<option value="Dubai">Dubai</option>' +
+  '<option value="Rome">Rome</option>' +
+  '<option value="Bangkok">Bangkok</option>' +
+  '<option value="Vancouver">Vancouver</option>' +
+  '</select>';
+
+const submitBtn = document.getElementById('submitBtn');
 submitBtn.addEventListener('click', async () => {
   console.log('Click search button...');
   const date = document.getElementById('date').value;
@@ -31,14 +55,29 @@ submitBtn.addEventListener('click', async () => {
     refreshDaySection(res.data);
     // refreshApodSection(response.data);
 
+    // Add view astronomy event listener
     Array.from(
       document.getElementsByClassName('apodBtn')
     ).forEach((element) => {
-      // console.log(element);
       element.addEventListener('click', () => {
         // console.log(element);
         const year = element.id;
         onClickShowApod(year);
+      });
+    });
+
+    // TODO: Add view weather button event listener
+    Array.from(
+      document.getElementsByClassName('cityBtn')
+    ).forEach((element) => {
+      element.addEventListener('click', () => {
+        const city = document.getElementById(
+          `city-${element.id}`
+        ).value;
+        const year = element.id.split('-')[0];
+        // console.log(element);
+        // console.log(city);
+        onClickShowWeather(city, year);
       });
     });
   } else {
@@ -53,16 +92,21 @@ const refreshDaySection = function (data) {
   if (data.success && data.data.success) {
     s += '<h1>History on This Day</h1>';
     // console.log(data.data.data);
-    s += `<img src='${data.data.data.todayImg}' alt='${data.data.todayImgText}' width='100%' height='auto'>`;
+    s += `<img src='${data.data.data.todayImg}' alt='${data.data.todayImgText}' width='100%' height='auto' style='margin-bottom: 20px'>`;
     // console.log(data.data, data.data.length);
     for (let d of data.data.data.dayDetail) {
       let t = '';
-      t += `<p class='day-year' style='font-size: 18px'>${d.year}</p>`;
-      t += `<p class='day-title' style='font-size: 14px; font-weight: bold'>${d.title}</p>`;
-      t += `<a href='${d.url}}'><button>View Article</button></a>`;
-      t += `<button class='apodBtn' id='${d.year}' style='margin-bottom: 20px'>View the Apod</button>`;
-      t += '</br>';
+      t += `<p class='day-year' style='font-size: 18px'>${d.year}/${inputMD[1].month}/${inputMD[1].day}</p>`;
+      t += `<p class='day-title' style='font-size: 14px; font-weight: bold'>${d.title}<a href='${d.url}}' style="margin-left: 10px">>> link</a></p>`;
 
+      // show a list of cities to select
+      t += `<label for="city-${d.year}-${d.id}" style="margin-right: 5px">Choose a City:</label>`;
+      t += `<select name="cityDropbox" id="city-${d.year}-${d.id}">`;
+      t += cityDropBoxHTML;
+      t += `<button class="cityBtn" id="${d.year}-${d.id}" type='submit' style='margin-left: 10px; margin-bottom: 20px'>View Weather</button>`;
+      t += '<br />';
+      t += `<button class='apodBtn' id='${d.year}' style='margin-bottom: 20px'>View Astronomy on ${d.year}/${inputMD[1].month}/${inputMD[1].day}</button>`;
+      t += '';
       s += t;
     }
   } else {
@@ -83,6 +127,37 @@ const refreshApodSection = function (data) {
   }
   document.getElementById('apod').innerHTML = s;
   console.log('Done refreshing Apod Page!');
+};
+
+const refreshWeatherSection = function (data) {
+  console.log('Refreshing Weather section!');
+  let s = '';
+  if (data.success) {
+    // s += '<div background-image: url("img/weather.jpg")>';
+    s += '<h1>Weather on This Day</h1>';
+    s += `<p class="weather-city" style='font-size: 18px'>City: ${data.data.name} (${data.data.lat}, ${data.data.long})</p>`;
+    s += `<p class="weather-date" style='font-size: 18px'>Date: ${data.data.date}</p>`;
+    s += `<p class="weather-timezone" style='font-size: 18px'>Timezone: ${data.data.timezone}</p>`;
+    s += '<br />';
+    s += '<h2>Temperature</h2>';
+    // s += `<img src='${data.data.todayImg}' alt='${data.data.todayImgText}' width='100%' height='auto' style='margin-bottom: 20px'>`;
+    s += `<p class='weather-description' style='font-size: 14px'>${data.data.description}</p>`;
+    s += `<p class='weather-temp' style='font-size: 14px'>Average Temperature: ${data.data.avgTemp}</p>`;
+    s += `<p class='weather-mintemp' style='font-size: 14px'>Min Temperature: ${data.data.minTemp}</p>`;
+    s += `<p class='weather-maxtemp' style='font-size: 14px'>Max Temperature: ${data.data.maxTemp}</p>`;
+    s += '<br />';
+    s += '<h2>Sun</h2>';
+    s += `<p class='weather-sunrise' style='font-size: 14px'>Sunrise Time: ${data.data.sunrise}</p>`;
+    s += `<p class='weather-sunset' style='font-size: 14px'>Sunset Time: ${data.data.sunset}</p>`;
+    s += '<br />';
+    // TODO: add a image from that date in Brisbane
+    s += '<br />';
+    // s += '</div>';
+  } else {
+    s += `<p class='errMsg'>${data.data.msg}</p>`;
+  }
+  document.getElementById('apod').innerHTML = s;
+  console.log('Done refreshing Weather Page!');
 };
 
 async function onClickShowApod(year) {
@@ -107,6 +182,37 @@ async function onClickShowApod(year) {
       '<h2 style="text-align: center; margin-bottom: 1rem; padding-top: 20rem">This date is tooooo long time ago...</h2>';
     s +=
       '<p style="text-align: center">Please choose another date to show.</p>';
+    s +=
+      '<p style="text-align: center">(Select a date after 16 Jun 1995)</p>';
+    document.getElementById('apod').innerHTML = s;
+  }
+}
+
+async function onClickShowWeather(city, year) {
+  console.log('Click view weather button...');
+  const limitDate = new Date('1970-01-01');
+  const inputDate = new Date(
+    `${year}-${inputMD[1].month}-${inputMD[1].day}`
+  );
+  if (inputDate >= limitDate) {
+    await axios
+      .post(`${window.location.href}weather`, {
+        city: city,
+        year: year,
+        month: inputMD[1].month,
+        day: inputMD[1].day,
+      })
+      .then((res) => {
+        // console.log(res.data);
+        refreshWeatherSection(res.data);
+      });
+  } else {
+    let s =
+      '<h2 style="text-align: center; margin-bottom: 1rem; padding-top: 20rem">This date is tooooo long time ago...</h2>';
+    s +=
+      '<p style="text-align: center">Please choose another date to show.</p>';
+    s +=
+      '<p style="text-align: center">(Select a date after 1 Jan 1970)</p>';
     document.getElementById('apod').innerHTML = s;
   }
 }
