@@ -6,6 +6,7 @@ require('dotenv').config();
 const onThisDayRouter = require('./routes/onThisDay');
 const apodRouter = require('./routes/apod');
 const weatherRouter = require('./routes/weather');
+const counterRouter = require('./routes/counter');
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.get('/', (req, res) => {
 app.use('/onThisDay', onThisDayRouter);
 app.use('/apod', apodRouter);
 app.use('/weather', weatherRouter);
+app.use('/counter', counterRouter);
 
 app.listen(PORT, () =>
   console.log(`Listening on port ${PORT}......`)

@@ -3,6 +3,26 @@ import axios from 'https://cdn.jsdelivr.net/npm/axios@1.3.5/+esm';
 // store the data as a global variable(month and date)
 const inputMD = [0];
 
+window.onload = async function () {
+  console.log('Winodw onload!');
+  const res = await axios.post(
+    `${window.location.href}counter/getCounter`
+  );
+  const count = res.data.data.count + 1;
+  refreshCounter(count);
+  await axios.post(
+    `${window.location.href}counter/updateCounter`,
+    {
+      count: count,
+    }
+  );
+};
+
+const refreshCounter = function (count) {
+  const countDiv = document.getElementById('counter');
+  countDiv.innerText = `Number of Visitor: ${count}`;
+};
+
 // the html code for city dropbox
 const cityDropBoxHTML =
   '<option value="New York">New York</option>' +
@@ -35,6 +55,7 @@ submitBtn.addEventListener('click', async () => {
   const year = dateArr[0];
   const month = dateArr[1];
   const day = dateArr[2];
+
   inputMD.push({
     month: month,
     day: day,
@@ -42,7 +63,14 @@ submitBtn.addEventListener('click', async () => {
   // console.log(date);
   // console.log(year, month, day);
 
-  if (date !== '') {
+  const inputDate = new Date(date);
+  const todayDate = new Date();
+  // console.log(inputDate.toString());
+  // console.log(todayDate.toString());
+  if (inputDate > todayDate) {
+    console.log('Input Error: input date after today!');
+    alert('Please choose a date before today!');
+  } else if (date !== '') {
     const res = await axios.post(
       `${window.location.href}onThisDay`,
       {
@@ -66,7 +94,7 @@ submitBtn.addEventListener('click', async () => {
       });
     });
 
-    // TODO: Add view weather button event listener
+    // Add view weather button event listener
     Array.from(
       document.getElementsByClassName('cityBtn')
     ).forEach((element) => {

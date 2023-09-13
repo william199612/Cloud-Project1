@@ -5,6 +5,7 @@ const router = express.Router();
 const fs = require('fs');
 
 async function createS3bucket(s3, bucketName) {
+  console.log('Creating Bucket!');
   try {
     console.log(bucketName);
     await s3.createBucket({ Bucket: bucketName }).promise();
@@ -26,6 +27,7 @@ async function uploadJsonToS3(
   objectKey,
   jsonData
 ) {
+  console.log('Uploading Json to S3!');
   const params = {
     Bucket: bucketName,
     Key: objectKey,
@@ -43,6 +45,7 @@ async function uploadJsonToS3(
 
 // Retrieve the object from S3
 async function getObjectFromS3(s3, bucketName, objectKey) {
+  console.log('Getting object from S3!');
   const params = {
     Bucket: bucketName,
     Key: objectKey,
@@ -56,8 +59,10 @@ async function getObjectFromS3(s3, bucketName, objectKey) {
       data.Body.toString('utf-8')
     );
     console.log('Parsed JSON data:', parsedData);
+    return parsedData;
   } catch (err) {
     console.error('Error:', err);
+    return 'Error';
   }
 }
 
@@ -78,13 +83,26 @@ router.post('/getCounter', async function (req, res, next) {
   const objectKey = 'counter.json';
 
   await createS3bucket(s3, bucketName);
-  await getObjectFromS3(s3, bucketName, objectKey);
+  const rsp = await getObjectFromS3(
+    s3,
+    bucketName,
+    objectKey
+  );
+  if (rsp === 'Error') {
+    return res.status(500).json({ success: false });
+  } else {
+    return res.status(200).json({
+      success: true,
+      data: rsp,
+    });
+  }
 });
 
 // upload object to aws s3
 router.post(
   '/updateCounter',
   async function (req, res, next) {
+    const { count } = req.body;
     AWS.config.update({
       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -101,7 +119,7 @@ router.post(
 
     // JSON data to be written to S3
     const jsonData = {
-      count: 1,
+      count: count,
     };
     await createS3bucket(s3, bucketName);
     await uploadJsonToS3(
