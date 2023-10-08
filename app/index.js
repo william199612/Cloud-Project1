@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const PORT = 3000;
+const HOST = '0.0.0.0';
 require('dotenv').config();
 
 const onThisDayRouter = require('./routes/onThisDay');
@@ -23,6 +24,6 @@ app.use('/apod', apodRouter);
 app.use('/weather', weatherRouter);
 app.use('/counter', counterRouter);
 
-app.listen(PORT, () =>
-  console.log(`Listening on port ${PORT}......`)
+app.listen(PORT, HOST, () =>
+  console.log(`Listening on port ${HOST}:${PORT}......`)
 );
